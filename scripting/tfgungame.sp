@@ -337,6 +337,8 @@ public Action OnTFRoundStart(Event event, const char[] name, bool dontBroadcast)
 	
 	PrintToChatAll("\x07FFA500[GunGame]\x07FFFFFF PROTIP: You can type \x07FF5555!gg_help\x07FFFFFF for some information about the gamemode!");
 	
+	PrintToChatAll("\x07FF5555DEBUG BUILD: \x07FF7070Cosmetics disabled and all weapons use Pyro. Stuff will look wonky, only debugging lag issues");
+	
 	
 	CreateTimer(5.0, CleanEnts);
 	return Plugin_Continue;
@@ -644,6 +646,9 @@ void SetPlayerWeapon(int iClient, int iRank, bool refresh = false)
 	GGWeapon hWeapon = GGWeapon.GetFromSeries(iRank);
 
 	TFClassType eClass = hWeapon.Class;
+	
+	eClass = TFClass_Pyro;
+	
 	TF2_SetPlayerClass(iClient, eClass, _, true);
 
 	g_bCooldownWeps[iClient] = true;
@@ -737,8 +742,8 @@ public Action RemoveWepCooldown(Handle hTimer, int iClient)
 }
 
 stock int CreateWeapon(int client, char[] sName, int index, int level = 1, int qual = 1, char[] att, int flags = OVERRIDE_ALL | PRESERVE_ATTRIBUTES)
-{
-	Handle hWeapon = TF2Items_CreateItem(flags);
+{	
+	Handle hWeapon = TF2Items_CreateItem(flags | FORCE_GENERATION);
 	if (hWeapon == INVALID_HANDLE)
 		return -1;
 	
