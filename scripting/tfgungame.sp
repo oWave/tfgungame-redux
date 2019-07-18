@@ -301,8 +301,18 @@ public Action OnPlayerRunCmd(int client, int &buttons, int &impulse, float vel[3
 
 public void OnEntityCreated(int entity, const char[] classname)
 {
-	if (IsValidEntity(entity) && StrEqual(classname, "tf_wearable_demoshield"))
+	if (!IsValidEntity(entity))
+		return;
+	
+	if (StrEqual(classname, "tf_wearable_demoshield"))
 		AcceptEntityInput(entity, "Kill");
+	else if (StrEqual(classname, "tf_wearable")) {
+		// Kill cosmetics and everything returning unknown like spellbooks.
+		// This will kill the backpack model from banners/parachute but the weapon itself will still work
+		TF2ItemSlot slot = TF2IDB_GetItemSlot(GetEntProp(entity, Prop_Send, "m_iItemDefinitionIndex"));
+		if (slot == TF2ItemSlot_Hat || slot == TF2ItemSlot_Misc || view_as<int>(slot) == -1)
+			AcceptEntityInput(entity, "Kill");
+	}
 }
 
 public Action OnTFRoundStartPre(Event event, const char[] name, bool dontBroadcast)
